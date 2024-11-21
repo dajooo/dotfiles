@@ -22,20 +22,35 @@ def ensure_parent_dir [path: string] {
 }
 
 # Prompt for yes/no/all
-def prompt_yes_no_all [question: string] {
-    if $env.ALL_YES? == true {
-        return true
+def prompt_yes_no_all [question: string, answer_all: bool] {
+    if $answer_all {
+        return {
+            confirmed: true
+            answer_all: true
+        }
     }
 
     loop {
         print -n $"($question) [y/N/all] "
         let input = (input)
         match $input {
-            "y" | "Y" => { return true }
-            "n" | "N" | "" => { return false }
+            "y" | "Y" => { 
+                return {
+                    confirmed: true
+                    answer_all: false
+                }
+            }
+            "n" | "N" | "" => { 
+                return {
+                    confirmed: false
+                    answer_all: false
+                }
+            }
             "a" | "A" | "all" => {
-                $env.ALL_YES = true
-                return true
+                return {
+                    confirmed: true
+                    answer_all: true
+                }
             }
             _ => { print "Please answer yes, no, or all." }
         }
@@ -56,18 +71,20 @@ def prompt_yes_no [question: string] {
 }
 
 # Create symlink based on source type
-def create_symlink [source: string, target: string] {
+def create_symlink [source: string, target: string, answer_all: bool] {
     let expanded_target = (expand_path $target)
     ensure_parent_dir $expanded_target
     
     # Check if target already exists
     if ($expanded_target | path exists) {
         let prompt = $"($expanded_target) already exists. Replace it?"
-        if not (prompt_yes_no_all $prompt) {
+        let result = (prompt_yes_no_all $prompt $answer_all)
+        if not $result.confirmed {
             print $"Skipped: ($expanded_target)"
-            return
+            return $result.answer_all
         }
         rm -rf $expanded_target
+        return $result.answer_all
     }
 
     # Check if source is a directory
@@ -84,10 +101,12 @@ def create_symlink [source: string, target: string] {
     } else {
         ln -s $source $expanded_target
     }
+    
+    return $answer_all
 }
 
 # Process each mapping
-def process_mapping [mapping] {
+def process_mapping [mapping, answer_all: bool] {
     let source = ("files/" + $mapping.path | path expand)
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
@@ -104,7 +123,9 @@ def process_mapping [mapping] {
     }
     
     if $should_apply {
-        create_symlink $source $target
+        create_symlink $source $target $answer_all
+    } else {
+        $answer_all
     }
 }
 
@@ -117,13 +138,11 @@ def main [] {
         print "Operation cancelled."
         exit 0
     }
-
-    # Initialize ALL_YES flag
-    $env.ALL_YES = false
     
     let config = load_config
-    $config.pathMappings | each { |mapping|
-        process_mapping $mapping
+    let answer_all = false
+    $config.pathMappings | reduce -f $answer_all { |mapping, acc|
+        process_mapping $mapping $acc
     }
     print "✨ Configuration applied successfully!"
 }
