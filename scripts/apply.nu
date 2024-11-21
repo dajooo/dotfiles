@@ -203,8 +203,11 @@ def main [] {
     # Print system information
     print_debug $"System Information:"
     print_debug $"- OS: ($nu.os-info.name)"
-    print_debug $"- Home: ($env.HOME)"
-    print_debug $"- UserProfile: ($env.USERPROFILE)"
+    if $nu.os-info.name == "windows" {
+        print_debug $"- Home directory: ($env.USERPROFILE)"
+    } else {
+        print_debug $"- Home directory: ($env.HOME)"
+    }
     
     # Ask for confirmation before proceeding
     if not (prompt_yes_no "Would you like to proceed with creating symlinks?") {
