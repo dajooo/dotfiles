@@ -142,7 +142,7 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
         # Get absolute paths
-        let abs_source = (pwd | path join $source | path expand)
+        let abs_source = ($source | path expand)
         let abs_target = ($expanded_target | path expand)
         
         # Ensure paths use backslashes
@@ -156,7 +156,9 @@ def create_symlink [source: string, target: string, answer_all: bool] {
             ^cmd /c mklink $win_target $win_source
         }
     } else {
-        ln -s $source $expanded_target
+        # Get absolute paths
+        let abs_source = ($source | path expand)
+        ln -s $abs_source $expanded_target
     }
     
     return $answer_all
