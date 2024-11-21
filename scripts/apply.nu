@@ -210,7 +210,7 @@ def main [] {
     print_info "🔗 Creating symlinks..."
     
     # Check for admin privileges on Windows
-    if $nu.os-info.name == "windows" and (not (is_admin)) {
+    if $nu.os-info.name == "windows" and (not (is-admin)) {
         print_error "Administrator privileges are required to create symlinks on Windows."
         print_info "Please run this script as Administrator:"
         print_info "1. Right-click on Windows Terminal"
