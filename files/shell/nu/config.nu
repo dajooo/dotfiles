@@ -3,6 +3,11 @@
 # Disable welcome message
 $env.config = {
     show_banner: false
+    cursor_shape: {
+        emacs: line
+        vi_insert: line
+        vi_normal: block
+    }
 }
 
 # Load environment setup
@@ -17,10 +22,10 @@ $env.PROMPT_COMMAND = { ||
     }
     
     # Run starship prompt
-    starship prompt
+    (starship prompt | str trim) + ($"(ansi escape)[5 q(ansi escape)[?25h")
 }
 
-$env.PROMPT_COMMAND_RIGHT = { || "" }
+$env.PROMPT_COMMAND_RIGHT = { || starship prompt --right }
 
 # Aliases
 alias ll = ls -l
