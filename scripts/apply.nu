@@ -141,13 +141,19 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     # Create the symlink
     print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
+        # Get absolute paths
+        let abs_source = ($source | path expand)
+        let abs_target = ($expanded_target | path expand)
+        
         # Ensure paths use backslashes
-        let win_source = ($source | str replace -a "/" "\\")
-        let win_target = ($expanded_target | str replace -a "/" "\\")
+        let win_source = ($abs_source | str replace -a "/" "\\")
+        let win_target = ($abs_target | str replace -a "/" "\\")
+        
+        # Create the symlink using PowerShell (requires admin)
         if $is_dir {
-            ^cmd /c mklink /D $win_target $win_source
+            ^powershell -Command $"New-Item -ItemType SymbolicLink -Path '($win_target)' -Target '($win_source)' -Force"
         } else {
-            ^cmd /c mklink $win_target $win_source
+            ^powershell -Command $"New-Item -ItemType SymbolicLink -Path '($win_target)' -Target '($win_source)' -Force"
         }
     } else {
         ln -s $source $expanded_target
@@ -165,10 +171,10 @@ def process_mapping [mapping, answer_all: bool] {
     # Check if mapping should be applied for current OS
     let should_apply = if $os == "all" {
         true
-    } else if $os == "windows" {
-        $nu.os-info.name == "windows"
-    } else if $os == "unix" {
-        $nu.os-info.name != "windows"
+    } else if $os == "windows" and $nu.os-info.name == "windows" {
+        true
+    } else if $os == "unix" and $nu.os-info.name != "windows" {
+        true
     } else {
         false
     }
