@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DotFiles",
+  "description": "Schema for my DotFiles definition file",
+  "type": "object"  ,
+  "properties": {
+    "pathMappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "diskPath": {
+            "type": "string"
+          },
+          "os": {
+            "type": "string",
+            "enum": ["windows", "unix"]
+          }
+        },
+        "required": ["path", "diskPath"]
+      }
+    }
+  }
+}

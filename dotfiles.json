@@ -1,0 +1,29 @@
+{
+  "$schema": ".util/schema.json",
+  "pathMappings": [
+    {
+      "path": "shell/starship.toml",
+      "diskPath": "~/.config/starship.toml"
+    },
+    {
+      "path": "shell/nu/",
+      "diskPath": "~/AppData/Roaming/nushell",
+      "os": "windows"
+    },
+    {
+      "path": "shell/nu/",
+      "diskPath": "~/.config/nushell",
+      "os": "unix"
+    },
+    {
+      "path": "shell/.zshrc",
+      "diskPath": "~/.zshrc",
+      "os": "unix"
+    },
+    {
+      "path": "shell/.oh-my-zsh",
+      "diskPath": "~/.oh-my-zsh",
+      "os": "unix"
+    }
+  ]
+}
