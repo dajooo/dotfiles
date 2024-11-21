@@ -14,7 +14,7 @@ if (-not (Get-Command "nu" -ErrorAction SilentlyContinue)) {
 }
 
 # Configure Windows Terminal
-$wtSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+<# $wtSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 
 if (Test-Path $wtSettingsPath) {
     Write-Host "Configuring Windows Terminal..."
@@ -62,6 +62,6 @@ if (Test-Path $wtSettingsPath) {
     [System.IO.File]::WriteAllText($wtSettingsPath, $jsonSettings)
     
     Write-Host "Windows Terminal configured with Nushell as default profile"
-}
+} #>
 
 Write-Host "Done. nu is now installed."
