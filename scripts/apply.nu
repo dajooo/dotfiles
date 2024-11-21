@@ -17,7 +17,6 @@ def expand_path [path: string] {
     } else {
         $expanded
     }
-    print_debug $"Expanding path: ($path) -> ($normalized)"
     $normalized
 }
 
@@ -25,7 +24,6 @@ def expand_path [path: string] {
 def ensure_parent_dir [path: string] {
     let parent = ($path | path dirname)
     if not ($parent | path exists) {
-        print_debug $"Creating parent directory: ($parent)"
         mkdir $parent
     }
 }
@@ -40,12 +38,6 @@ def get_colors [] {
         reset: (ansi reset)
         bold: (ansi -e '1')
     }
-}
-
-# Print debug message
-def print_debug [message: string] {
-    let colors = get_colors
-    print $"($colors.blue)DEBUG: ($message)($colors.reset)"
 }
 
 # Prompt for yes/no/all with consistent formatting
@@ -150,23 +142,18 @@ def create_symlink [source: string, target: string, answer_all: bool] {
 
     # Check if source is a directory
     let is_dir = ($source | path type) == "dir"
-    print_debug $"Source type check: ($source) is directory? ($is_dir)"
 
     # Create the symlink
-    print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
         # Ensure paths use backslashes and are properly quoted
         let win_source = ($source | str replace -a "/" "\\")
         let win_target = ($expanded_target | str replace -a "/" "\\")
         if $is_dir {
-            print_debug "Using Windows directory symlink command"
             ^cmd /c mklink /D $win_target $win_source
         } else {
-            print_debug "Using Windows file symlink command"
             ^cmd /c mklink $win_target $win_source
         }
     } else {
-        print_debug "Using Unix symlink command"
         ln -s $source $expanded_target
     }
     
@@ -179,12 +166,6 @@ def process_mapping [mapping, answer_all: bool] {
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
     
-    print_debug $"Processing mapping:"
-    print_debug $"- Source: ($source)"
-    print_debug $"- Target: ($target)"
-    print_debug $"- OS: ($os)"
-    print_debug $"- Current OS: ($nu.os-info.name)"
-    
     # Check if mapping should be applied for current OS
     let should_apply = if $os == "all" {
         true
@@ -195,8 +176,6 @@ def process_mapping [mapping, answer_all: bool] {
     } else {
         false
     }
-    
-    print_debug $"Should apply? ($should_apply)"
     
     if $should_apply {
         create_symlink $source $target $answer_all
@@ -218,15 +197,6 @@ def main [] {
         print_info "3. Navigate to this directory"
         print_info "4. Run the script again"
         exit 1
-    }
-    
-    # Print system information
-    print_debug $"System Information:"
-    print_debug $"- OS: ($nu.os-info.name)"
-    if $nu.os-info.name == "windows" {
-        print_debug $"- Home directory: ($env.USERPROFILE)"
-    } else {
-        print_debug $"- Home directory: ($env.HOME)"
     }
     
     # Ask for confirmation before proceeding

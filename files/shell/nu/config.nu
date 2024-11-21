@@ -5,31 +5,18 @@ $env.config = {
     show_banner: false
 }
 
-# Default env values
-$env.EDITOR = "nvim"
-$env.VISUAL = "nvim"
+# Load environment setup
+source env.nu
 
-# Starship configuration
-$env.STARSHIP_SHELL = "nu"
-$env.STARSHIP_CONFIG = if $nu.os-info.name == "windows" {
-    $"($env.APPDATA)/starship.toml"
-} else {
-    $"($env.HOME)/.config/starship.toml"
-}
-
-# Set up the prompt
+# Set up prompt using starship
 $env.PROMPT_COMMAND = { || 
-    # Create starship cache directory if it doesn't exist
-    let cache_dir = if $nu.os-info.name == "windows" {
-        $"($env.APPDATA)/starship/cache"
-    } else {
-        $"($env.HOME)/.cache/starship"
-    }
-    if not ($cache_dir | path exists) {
-        mkdir $cache_dir
+    # Initialize starship if needed
+    if not ($env.STARSHIP_CACHE_DIR | path exists) {
+        mkdir $env.STARSHIP_CACHE_DIR
+        starship init nu | save -f $"($env.STARSHIP_CACHE_DIR)/init.nu"
     }
     
-    # Initialize starship
+    # Run starship prompt
     starship prompt
 }
 
@@ -67,6 +54,3 @@ def mkcd [dirname: string] {
     mkdir $dirname
     cd $dirname
 }
-
-# Load environment config
-source env.nu
