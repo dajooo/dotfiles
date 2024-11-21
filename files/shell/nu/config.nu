@@ -9,6 +9,32 @@ $env.config = {
 $env.EDITOR = "nvim"
 $env.VISUAL = "nvim"
 
+# Starship configuration
+$env.STARSHIP_SHELL = "nu"
+$env.STARSHIP_CONFIG = if $nu.os-info.name == "windows" {
+    $"($env.APPDATA)/starship.toml"
+} else {
+    $"($env.HOME)/.config/starship.toml"
+}
+
+# Set up the prompt
+$env.PROMPT_COMMAND = { || 
+    # Create starship cache directory if it doesn't exist
+    let cache_dir = if $nu.os-info.name == "windows" {
+        $"($env.APPDATA)/starship/cache"
+    } else {
+        $"($env.HOME)/.cache/starship"
+    }
+    if not ($cache_dir | path exists) {
+        mkdir $cache_dir
+    }
+    
+    # Initialize starship
+    starship prompt
+}
+
+$env.PROMPT_COMMAND_RIGHT = { || "" }
+
 # Aliases
 alias ll = ls -l
 alias la = ls -a

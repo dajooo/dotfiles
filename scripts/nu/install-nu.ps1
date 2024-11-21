@@ -8,9 +8,16 @@ if (-not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
     Add-AppxPackage -Path $outFile
 }
 
+# Install Nushell if not already installed
 if (-not (Get-Command "nu" -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing nu..."
+    Write-Host "Installing Nushell..."
     winget install nushell
+}
+
+# Install Starship if not already installed
+if (-not (Get-Command "starship" -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing Starship..."
+    winget install starship
 }
 
 # Configure Windows Terminal
@@ -64,4 +71,4 @@ if (Test-Path $wtSettingsPath) {
     Write-Host "Windows Terminal configured with Nushell as default profile"
 } #>
 
-Write-Host "Done. nu is now installed."
+Write-Host "Done. Nushell and Starship are now installed and configured."

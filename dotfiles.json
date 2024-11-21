@@ -3,7 +3,13 @@
   "pathMappings": [
     {
       "path": "files/shell/starship.toml",
-      "diskPath": "~/.config/starship.toml"
+      "diskPath": "~/AppData/Roaming/starship.toml",
+      "os": "windows"
+    },
+    {
+      "path": "files/shell/starship.toml",
+      "diskPath": "~/.config/starship.toml",
+      "os": "unix"
     },
     {
       "path": "files/shell/nu/",

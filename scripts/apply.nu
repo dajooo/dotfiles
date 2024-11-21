@@ -3,6 +3,17 @@ def load_config [] {
     open dotfiles.json
 }
 
+# Check if running with admin privileges on Windows
+def is_admin [] {
+    if $nu.os-info.name == "windows" {
+        let result = (do { ^net session } | complete)
+        $result.exit_code == 0
+    } else {
+        # On Unix, we'll check if effective user ID is 0 (root)
+        (sys).uid == 0
+    }
+}
+
 # Convert ~ to home directory and normalize path separators
 def expand_path [path: string] {
     let home = if $nu.os-info.name == "windows" {
@@ -175,8 +186,8 @@ def create_symlink [source: string, target: string, answer_all: bool] {
 
 # Process each mapping
 def process_mapping [mapping, answer_all: bool] {
-    # Fix the double "files" in the path
-    let source = ("files/" + $mapping.path | path expand | str replace "files/files/" "files/")
+    # Fix the double "files" in the path by using path relative to current directory
+    let source = ($mapping.path | path expand)
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
     
@@ -209,6 +220,17 @@ def process_mapping [mapping, answer_all: bool] {
 # Main execution
 def main [] {
     print_info "🔗 Creating symlinks..."
+    
+    # Check for admin privileges on Windows
+    if $nu.os-info.name == "windows" and (not (is_admin)) {
+        print_error "Administrator privileges are required to create symlinks on Windows."
+        print_info "Please run this script as Administrator:"
+        print_info "1. Right-click on Windows Terminal"
+        print_info "2. Select 'Run as administrator'"
+        print_info "3. Navigate to this directory"
+        print_info "4. Run the script again"
+        exit 1
+    }
     
     # Print system information
     print_debug $"System Information:"
