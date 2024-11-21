@@ -26,7 +26,7 @@ if (Test-Path $wtSettingsPath) {
     $nuProfile = @{
         name = "Nushell"
         commandline = "nu.exe"
-        icon = "🔨"
+        icon = "`u{1F6E0}"  # Unicode wrench emoji
         startingDirectory = "%USERPROFILE%"
         hidden = $false
     }
@@ -47,8 +47,8 @@ if (Test-Path $wtSettingsPath) {
     }
     $settings.defaultProfile = $nuGuid
     
-    # Save settings
-    $settings | ConvertTo-Json -Depth 32 | Set-Content -Path $wtSettingsPath
+    # Save settings with UTF-8 encoding
+    $settings | ConvertTo-Json -Depth 32 | Out-File -FilePath $wtSettingsPath -Encoding UTF8
     
     Write-Host "Windows Terminal configured with Nushell as default profile"
 }
