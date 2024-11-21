@@ -142,18 +142,18 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
         # Get absolute paths
-        let abs_source = ($source | path expand)
+        let abs_source = (pwd | path join $source | path expand)
         let abs_target = ($expanded_target | path expand)
         
         # Ensure paths use backslashes
         let win_source = ($abs_source | str replace -a "/" "\\")
         let win_target = ($abs_target | str replace -a "/" "\\")
         
-        # Create the symlink using PowerShell (requires admin)
+        # Create the symlink using mklink
         if $is_dir {
-            ^powershell -Command $"New-Item -ItemType SymbolicLink -Path '($win_target)' -Target '($win_source)' -Force"
+            ^cmd /c mklink /D $win_target $win_source
         } else {
-            ^powershell -Command $"New-Item -ItemType SymbolicLink -Path '($win_target)' -Target '($win_source)' -Force"
+            ^cmd /c mklink $win_target $win_source
         }
     } else {
         ln -s $source $expanded_target
@@ -164,7 +164,7 @@ def create_symlink [source: string, target: string, answer_all: bool] {
 
 # Process each mapping
 def process_mapping [mapping, answer_all: bool] {
-    let source = ($mapping.path | path expand)
+    let source = ($mapping.path)
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
     
