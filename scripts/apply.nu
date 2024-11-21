@@ -3,7 +3,7 @@ def load_config [] {
     open dotfiles.json
 }
 
-# Convert ~ to home directory
+# Convert ~ to home directory and normalize path separators
 def expand_path [path: string] {
     let home = if $nu.os-info.name == "windows" {
         $env.USERPROFILE
@@ -11,8 +11,14 @@ def expand_path [path: string] {
         $env.HOME
     }
     let expanded = ($path | str replace "~" $home)
-    print_debug $"Expanding path: ($path) -> ($expanded)"
-    $expanded
+    # Convert forward slashes to backslashes on Windows
+    let normalized = if $nu.os-info.name == "windows" {
+        $expanded | str replace "/" "\\"
+    } else {
+        $expanded
+    }
+    print_debug $"Expanding path: ($path) -> ($normalized)"
+    $normalized
 }
 
 # Create parent directory if it doesn't exist
@@ -149,12 +155,15 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     # Create the symlink
     print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
+        # Ensure paths use backslashes and are properly quoted
+        let win_source = ($source | str replace "/" "\\")
+        let win_target = ($expanded_target | str replace "/" "\\")
         if $is_dir {
             print_debug "Using Windows directory symlink command"
-            ^cmd /c mklink /D $expanded_target $source
+            ^cmd /c mklink /D $win_target $win_source
         } else {
             print_debug "Using Windows file symlink command"
-            ^cmd /c mklink $expanded_target $source
+            ^cmd /c mklink $win_target $win_source
         }
     } else {
         print_debug "Using Unix symlink command"
@@ -166,7 +175,8 @@ def create_symlink [source: string, target: string, answer_all: bool] {
 
 # Process each mapping
 def process_mapping [mapping, answer_all: bool] {
-    let source = ("files/" + $mapping.path | path expand)
+    # Fix the double "files" in the path
+    let source = ("files/" + $mapping.path | path expand | str replace "files/files/" "files/")
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
     
