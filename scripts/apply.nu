@@ -11,13 +11,11 @@ def expand_path [path: string] {
         $env.HOME
     }
     let expanded = ($path | str replace "~" $home)
-    # Convert forward slashes to backslashes on Windows
-    let normalized = if $nu.os-info.name == "windows" {
+    if $nu.os-info.name == "windows" {
         $expanded | str replace -a "/" "\\"
     } else {
         $expanded
     }
-    $normalized
 }
 
 # Create parent directory if it doesn't exist
@@ -34,7 +32,6 @@ def get_colors [] {
         red: (ansi red)
         green: (ansi green)
         yellow: (ansi yellow)
-        blue: (ansi blue)
         reset: (ansi reset)
         bold: (ansi -e '1')
     }
@@ -52,7 +49,6 @@ def prompt_yes_no_all [question: string, answer_all: bool] {
     let colors = get_colors
     
     loop {
-        # Format: Question [y/N/all]
         print -n $"($colors.bold)($question)($colors.reset) ($colors.yellow)[y/N/all]($colors.reset) "
         
         let input = (input)
@@ -89,7 +85,6 @@ def prompt_yes_no [question: string] {
     let colors = get_colors
     
     loop {
-        # Format: Question [y/N]
         print -n $"($colors.bold)($question)($colors.reset) ($colors.yellow)[y/N]($colors.reset) "
         
         let input = (input)
@@ -144,8 +139,9 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     let is_dir = ($source | path type) == "dir"
 
     # Create the symlink
+    print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
-        # Ensure paths use backslashes and are properly quoted
+        # Ensure paths use backslashes
         let win_source = ($source | str replace -a "/" "\\")
         let win_target = ($expanded_target | str replace -a "/" "\\")
         if $is_dir {
