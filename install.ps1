@@ -77,10 +77,10 @@ Set-Location $DotfilesDir
 
 # Run installation
 Write-Host "`n⚙️ Installing nushell..."
-& .\scripts\initial\install-nu.ps1
+& .\scripts\nu\install-nu.ps1
 
 Write-Host "`n🔧 Applying configuration..."
-& .\apply.ps1
+& .\scripts\apply.ps1
 
 Write-Host "`n✨ Installation complete!"
 Write-Host "You can now:"
