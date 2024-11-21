@@ -3,17 +3,6 @@ def load_config [] {
     open dotfiles.json
 }
 
-# Check if running with admin privileges on Windows
-def is_admin [] {
-    if $nu.os-info.name == "windows" {
-        let result = (do { ^net session } | complete)
-        $result.exit_code == 0
-    } else {
-        # On Unix, we'll check if effective user ID is 0 (root)
-        (sys).uid == 0
-    }
-}
-
 # Convert ~ to home directory and normalize path separators
 def expand_path [path: string] {
     let home = if $nu.os-info.name == "windows" {
@@ -24,7 +13,7 @@ def expand_path [path: string] {
     let expanded = ($path | str replace "~" $home)
     # Convert forward slashes to backslashes on Windows
     let normalized = if $nu.os-info.name == "windows" {
-        $expanded | str replace "/" "\\"
+        $expanded | str replace -a "/" "\\"
     } else {
         $expanded
     }
@@ -167,8 +156,8 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     print_info $"Creating symlink: ($source) -> ($expanded_target)"
     if $nu.os-info.name == "windows" {
         # Ensure paths use backslashes and are properly quoted
-        let win_source = ($source | str replace "/" "\\")
-        let win_target = ($expanded_target | str replace "/" "\\")
+        let win_source = ($source | str replace -a "/" "\\")
+        let win_target = ($expanded_target | str replace -a "/" "\\")
         if $is_dir {
             print_debug "Using Windows directory symlink command"
             ^cmd /c mklink /D $win_target $win_source
@@ -186,7 +175,6 @@ def create_symlink [source: string, target: string, answer_all: bool] {
 
 # Process each mapping
 def process_mapping [mapping, answer_all: bool] {
-    # Fix the double "files" in the path by using path relative to current directory
     let source = ($mapping.path | path expand)
     let target = $mapping.diskPath
     let os = if ($mapping | get -i os) == null { "all" } else { $mapping.os }
