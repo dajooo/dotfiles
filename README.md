@@ -6,7 +6,7 @@ My personal dotfiles for shell configuration, focusing on nushell with starship 
 
 ### Windows
 ```powershell
-irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex
+powershell -c "irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
 ```
 
 ### Linux/macOS
