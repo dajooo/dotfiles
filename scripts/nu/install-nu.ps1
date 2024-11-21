@@ -22,8 +22,12 @@ if (Test-Path $wtSettingsPath) {
     # Read current settings
     $settings = Get-Content -Path $wtSettingsPath -Raw | ConvertFrom-Json
     
+    # Generate a new GUID for the profile
+    $nuGuid = [System.Guid]::NewGuid().ToString()
+    
     # Create nushell profile
-    $nuProfile = @{
+    $nuProfile = [PSCustomObject]@{
+        guid = $nuGuid
         name = "Nushell"
         commandline = "nu.exe"
         icon = "`u{1F6E0}"  # Unicode wrench emoji
@@ -36,19 +40,26 @@ if (Test-Path $wtSettingsPath) {
     if (-not $existingProfile) {
         # Add new profile
         $settings.profiles.list += $nuProfile
+    } else {
+        # Update existing profile
+        $existingProfile.guid = $nuGuid
+        $existingProfile.name = $nuProfile.name
+        $existingProfile.icon = $nuProfile.icon
+        $existingProfile.startingDirectory = $nuProfile.startingDirectory
+        $existingProfile.hidden = $nuProfile.hidden
     }
     
     # Set nushell as default profile
-    $nuGuid = ($settings.profiles.list | Where-Object { $_.commandline -eq "nu.exe" }).guid
-    if (-not $nuGuid) {
-        # Generate new GUID if not present
-        $nuGuid = [System.Guid]::NewGuid().ToString()
-        ($settings.profiles.list | Where-Object { $_.commandline -eq "nu.exe" }).guid = $nuGuid
-    }
     $settings.defaultProfile = $nuGuid
     
-    # Save settings with UTF-8 encoding
-    $settings | ConvertTo-Json -Depth 32 | Out-File -FilePath $wtSettingsPath -Encoding UTF8
+    # Convert settings to JSON with proper formatting
+    $jsonSettings = $settings | ConvertTo-Json -Depth 32
+    
+    # Ensure the JSON is properly formatted (no trailing commas)
+    $jsonSettings = $jsonSettings -replace ',(\s*[}\]])', '$1'
+    
+    # Save settings with UTF-8 encoding and no BOM
+    [System.IO.File]::WriteAllText($wtSettingsPath, $jsonSettings)
     
     Write-Host "Windows Terminal configured with Nushell as default profile"
 }
