@@ -158,7 +158,11 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     } else {
         # Get absolute paths
         let abs_source = ($source | path expand)
-        ln -s $abs_source $expanded_target
+        if $is_dir {
+            ln -s $"($abs_source)/*" $expanded_target
+        } else {
+            ln -s $abs_source $expanded_target
+        }
     }
     
     return $answer_all
