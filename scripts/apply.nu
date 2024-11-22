@@ -158,10 +158,15 @@ def create_symlink [source: string, target: string, answer_all: bool] {
     } else {
         # Get absolute paths
         let abs_source = ($source | path expand)
+        let abs_target = ($expanded_target | path expand)
+        
+        # Create the symlink
         if $is_dir {
-            ln -s $"($abs_source)/*" $expanded_target
+            # For directories, use -s only (no -f to prevent issues with existing directories)
+            ^ln -s $abs_source $abs_target
         } else {
-            ln -s $abs_source $expanded_target
+            # For files, use -sf to force creation
+            ^ln -sf $abs_source $abs_target
         }
     }
     
