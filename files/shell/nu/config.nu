@@ -14,18 +14,7 @@ $env.config = {
 source env.nu
 
 # Set up prompt using starship
-$env.PROMPT_COMMAND = { || 
-    # Initialize starship if needed
-    if not ($env.STARSHIP_CACHE_DIR | path exists) {
-        mkdir $env.STARSHIP_CACHE_DIR
-        starship init nu | save -f $"($env.STARSHIP_CACHE_DIR)/init.nu"
-    }
-    
-    # Run starship prompt
-    (starship prompt | str trim) + ($"(ansi escape)[5 q(ansi escape)[?25h")
-}
-
-$env.PROMPT_COMMAND_RIGHT = { || starship prompt --right }
+source starship.nu
 
 # Aliases
 alias ll = ls -l
