@@ -5,6 +5,12 @@
 export-env { load-env {
     STARSHIP_SHELL: "nu"
     STARSHIP_SESSION_KEY: (random chars -l 16)
+    # Explicitly set the config path
+    STARSHIP_CONFIG: (if $nu.os-info.name == "windows" {
+        $"($env.APPDATA)/starship.toml"
+    } else {
+        $"($env.HOME)/.config/starship.toml"
+    })
     PROMPT_MULTILINE_INDICATOR: (
         starship prompt --continuation
     )
