@@ -181,7 +181,7 @@ prompt_info "⚙️ Installing nushell..."
 ./scripts/nu/install-nu.sh
 
 prompt_info "🔧 Applying configuration..."
-./scripts/apply.sh
+nu ./scripts/apply.nu
 
 prompt_success "✨ Installation complete!"
 echo "You can now:"

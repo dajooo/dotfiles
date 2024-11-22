@@ -80,7 +80,7 @@ Write-Host "`n⚙️ Installing nushell..."
 & .\scripts\nu\install-nu.ps1
 
 Write-Host "`n🔧 Applying configuration..."
-& .\scripts\apply.ps1
+nu .\scripts\apply.nu
 
 Write-Host "`n✨ Installation complete!"
 Write-Host "You can now:"
