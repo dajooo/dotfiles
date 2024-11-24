@@ -1,8 +1,3 @@
-use $"($nu.default-config-dir)/starship.nu"
-source $"($nu.default-config-dir)/zoxide.nu"
-source $"($nu.default-config-dir)/k8s.nu"
-source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
-
 # Completions
 source $"($nu.default-config-dir)/scripts/custom-completions/pnpm/pnpm-completions.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/cargo/cargo-completions.nu"
@@ -16,5 +11,5 @@ source $"($nu.default-config-dir)/scripts/custom-completions/winget/winget-compl
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-help.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
 
-# Custom aliases
-alias code = codium
+# Aliases
+source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"

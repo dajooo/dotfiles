@@ -10,11 +10,17 @@ $env.config = {
     }
 }
 
+source scripts.nu
+source aliases.nu
+
 # Load environment setup
 source env.nu
 
 # Set up prompt using starship
 source starship.nu
+
+# Set up zoxide
+source zoxide.nu
 
 # Aliases
 alias ll = ls -l
