@@ -8,7 +8,7 @@ source $"($nu.default-config-dir)/scripts/custom-completions/poetry/poetry-compl
 source $"($nu.default-config-dir)/scripts/custom-completions/rustup/rustup-completions.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/vscode/vscode-completions.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/winget/winget-completions.nu"
-source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-help.nu"
+#source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-help.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
 
 # Aliases
