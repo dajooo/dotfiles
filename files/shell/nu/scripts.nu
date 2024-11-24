@@ -12,4 +12,4 @@ source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
 
 # Aliases
-source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
+#source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
