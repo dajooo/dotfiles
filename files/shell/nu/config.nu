@@ -20,14 +20,6 @@ source starship.nu
 alias ll = ls -l
 alias la = ls -a
 alias lla = ls -la
-alias g = git
-alias gst = git status
-alias ga = git add
-alias gc = git commit
-alias gp = git push
-alias gpl = git pull
-alias gd = git diff
-alias gco = git checkout
 
 # Directory navigation
 alias .. = cd ..

@@ -1,6 +1,7 @@
 use $"($nu.default-config-dir)/starship.nu"
 source $"($nu.default-config-dir)/zoxide.nu"
 source $"($nu.default-config-dir)/k8s.nu"
+source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
 
 # Completions
 source $"($nu.default-config-dir)/scripts/custom-completions/pnpm/pnpm-completions.nu"
