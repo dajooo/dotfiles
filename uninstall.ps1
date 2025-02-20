@@ -88,4 +88,4 @@ if (Get-Command "nu" -ErrorAction SilentlyContinue) {
     }
 }
 
-Write-Host "✨ Unapply complete!"
+Write-Host "✨ Uninstall complete!"
