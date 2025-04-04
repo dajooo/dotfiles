@@ -198,7 +198,8 @@ else
                 git stash
                 STASHED=true
                 # Ensure clean state before pull when stashing
-                prompt_info "Resetting repository to HEAD before pulling..."
+                prompt_info "Cleaning repository and resetting to HEAD before pulling..."
+                git clean -fdx
                 git reset --hard HEAD
             else
                 # Interactive mode, prompt user
@@ -212,7 +213,8 @@ else
                         git stash
                         STASHED=true
                         # Ensure clean state before pull when stashing
-                        prompt_info "Resetting repository to HEAD before pulling..."
+                        prompt_info "Cleaning repository and resetting to HEAD before pulling..."
+                        git clean -fdx
                         git reset --hard HEAD
                         ;;
                     2) # Reset

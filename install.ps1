@@ -98,7 +98,8 @@ else {
                 git stash
                 $stashed = $true
                 # Ensure clean state before pull when stashing
-                Write-Host "Resetting repository to HEAD before pulling..."
+                Write-Host "Cleaning repository and resetting to HEAD before pulling..."
+                git clean -fdx
                 git reset --hard HEAD
             } else {
                 # Interactive mode, prompt user
@@ -119,7 +120,8 @@ else {
                         git stash
                         $stashed = $true
                         # Ensure clean state before pull when stashing
-                        Write-Host "Resetting repository to HEAD before pulling..."
+                        Write-Host "Cleaning repository and resetting to HEAD before pulling..."
+                        git clean -fdx
                         git reset --hard HEAD
                     }
                     1 { # Reset
