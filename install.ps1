@@ -83,9 +83,34 @@ else {
     Write-Host "`n📂 Repository already exists."
     if (Prompt-YesNo -Question "Would you like to update it?" -AutoYes $y) {
         Set-Location $DotfilesDir
-        git pull
-        Write-Host "📥 Updating submodules..."
-        git submodule update --init --recursive
+        
+        # Check for local changes
+        $hasChanges = git status --porcelain
+        if ($hasChanges) {
+            Write-Host "Local changes detected in the repository."
+            if (Prompt-YesNo -Question "Would you like to stash your local changes before updating?" -AutoYes $y) {
+                git stash
+                $stashed = $true
+            } elseif (Prompt-YesNo -Question "Would you like to reset your local changes (this will discard them)?" -AutoYes $y) {
+                git reset --hard
+            } else {
+                Write-Host "Skipping repository update to preserve your local changes."
+                $skipUpdate = $true
+            }
+        }
+        
+        if (-not $skipUpdate) {
+            git pull
+            Write-Host "📥 Initializing submodules..."
+            git submodule update --init --recursive
+            
+            # Apply stashed changes if needed
+            if ($stashed) {
+                if (Prompt-YesNo -Question "Would you like to reapply your stashed changes?" -AutoYes $false) {
+                    git stash pop
+                }
+            }
+        }
     }
 }
 

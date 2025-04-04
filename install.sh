@@ -177,9 +177,33 @@ else
     prompt_info "📂 Repository already exists."
     if prompt_yes_no "Would you like to update it?" "y"; then
         cd "$DOTFILES_DIR"
-        git pull
-        prompt_info "📥 Updating submodules..."
-        git submodule update --init --recursive
+        
+        # Check for local changes
+        if [ -n "$(git status --porcelain)" ]; then
+            prompt_info "Local changes detected in the repository."
+            if prompt_yes_no "Would you like to stash your local changes before updating?" "y"; then
+                git stash
+                STASHED=true
+            elif prompt_yes_no "Would you like to reset your local changes (this will discard them)?" "y"; then
+                git reset --hard
+            else
+                prompt_info "Skipping repository update to preserve your local changes."
+                SKIP_UPDATE=true
+            fi
+        fi
+        
+        if [ -z "$SKIP_UPDATE" ]; then
+            git pull
+            prompt_info "📥 Updating submodules..."
+            git submodule update --init --recursive
+            
+            # Apply stashed changes if needed
+            if [ "$STASHED" = true ]; then
+                if prompt_yes_no "Would you like to reapply your stashed changes?" "n"; then
+                    git stash pop
+                fi
+            fi
+        fi
     fi
 fi
 
