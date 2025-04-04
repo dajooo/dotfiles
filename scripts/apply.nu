@@ -149,12 +149,17 @@ def create_symlink [source: string, target: string, answer_all: bool] {
         let win_source = ($abs_source | str replace -a "/" "\\")
         let win_target = ($abs_target | str replace -a "/" "\\")
         
-        # Create the symlink using mklink
-        if $is_dir {
-            ^cmd /c mklink /D $win_target $win_source
-        } else {
-            ^cmd /c mklink $win_target $win_source
-        }
+    # Log detailed information before creating the symlink
+    print_info $"Creating symlink: source='$source', target='$expanded_target', is_dir=$is_dir"
+    
+    # Create the symlink using mklink
+    if $is_dir {
+        let result = ^cmd /c mklink /D $win_target $win_source
+        print_info $"mklink /D result: $result"
+    } else {
+        let result = ^cmd /c mklink $win_target $win_source
+        print_info $"mklink result: $result"
+    }
     } else {
         # Get absolute paths
         let abs_source = ($source | path expand)
