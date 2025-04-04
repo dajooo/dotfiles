@@ -97,6 +97,9 @@ else {
                 Write-Host "Stashing local changes..."
                 git stash
                 $stashed = $true
+                # Ensure clean state before pull when stashing
+                Write-Host "Resetting repository to HEAD before pulling..."
+                git reset --hard HEAD
             } else {
                 # Interactive mode, prompt user
                 $choice = $Host.UI.PromptForChoice(
@@ -115,6 +118,9 @@ else {
                         Write-Host "Stashing local changes..."
                         git stash
                         $stashed = $true
+                        # Ensure clean state before pull when stashing
+                        Write-Host "Resetting repository to HEAD before pulling..."
+                        git reset --hard HEAD
                     }
                     1 { # Reset
                         Write-Host "Discarding local changes..."

@@ -197,6 +197,9 @@ else
                 prompt_info "Stashing local changes..."
                 git stash
                 STASHED=true
+                # Ensure clean state before pull when stashing
+                prompt_info "Resetting repository to HEAD before pulling..."
+                git reset --hard HEAD
             else
                 # Interactive mode, prompt user
                 read -p "Enter choice [1-3]: " CHOICE
@@ -208,6 +211,9 @@ else
                         prompt_info "Stashing local changes..."
                         git stash
                         STASHED=true
+                        # Ensure clean state before pull when stashing
+                        prompt_info "Resetting repository to HEAD before pulling..."
+                        git reset --hard HEAD
                         ;;
                     2) # Reset
                         prompt_info "Discarding local changes..."
