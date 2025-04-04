@@ -40,9 +40,3 @@ def git_branch [] {
 def git_status_short [] {
     git status -s
 }
-
-# Development helpers
-def mkcd [dirname: string] {
-    mkdir $dirname
-    cd $dirname
-}
