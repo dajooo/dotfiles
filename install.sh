@@ -220,7 +220,10 @@ else
         
         if [ -z "$SKIP_UPDATE" ]; then
             prompt_info "Updating repository..."
-            git pull
+            git pull || {
+                prompt_error "Failed to update repository. Please resolve conflicts manually."
+                exit 1
+            }
             prompt_info "📥 Updating submodules..."
             git submodule update --init --recursive
             

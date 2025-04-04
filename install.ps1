@@ -92,16 +92,21 @@ else {
         $hasChanges = (git status --porcelain)
         if ($hasChanges) {
             Write-Host "Local changes detected in the repository."
-            $choice = $Host.UI.PromptForChoice(
-                "Local Changes",
-                "How would you like to handle local changes?",
-                @(
+            if ($y) {
+                # In non-interactive mode, default to skipping the update
+                $choice = 2
+            } else {
+                $choice = $Host.UI.PromptForChoice(
+                    "Local Changes",
+                    "How would you like to handle local changes?",
+                    @(
                     [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes and reapply after update"),
                     [System.Management.Automation.Host.ChoiceDescription]::new("&Reset", "Discard local changes"),
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&Skip", "Skip update to preserve changes")
+                    [System.Management.Automation.Host.ChoiceDescription]::new("&S&kip", "Skip update to preserve changes")
                 ),
                 2  # Default to Skip
             )
+            }
             
             switch ($choice) {
                 0 {
