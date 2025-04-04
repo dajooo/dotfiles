@@ -198,7 +198,9 @@ def process_mapping [mapping, answer_all: bool] {
 }
 
 # Main execution
-def main [--auto-yes (-y)] {
+def main [] {
+    # Check for auto-yes environment variable
+    let auto_yes = (try { $env.DOTFILES_AUTO_YES == "true" } catch { false })
     print_info "🔗 Creating symlinks..."
     
     # Check for admin privileges on Windows

@@ -11,7 +11,7 @@ powershell -c "irm https://raw.githubusercontent.com/dajooo/dotfiles/main/instal
 
 For non-interactive installation (auto-yes to all prompts):
 ```powershell
-powershell -c "$env:DOTFILES_AUTO_YES='true'; irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
+powershell -c "Set-Item -Path Env:DOTFILES_AUTO_YES -Value 'true'; irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
 ```
 
 ### Linux/macOS
