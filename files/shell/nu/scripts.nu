@@ -15,5 +15,5 @@ source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse
 source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
 
 let home_dir = if $nu.os-info.name == "windows" { $env.USERPROFILE } else { $env.HOME }
-$env.PATH = ($home_dir + "/.fnm:" + $env.PATH)
-$env.PATH = ($home_dir + "/.fnm/aliases/default/bin:" + $env.PATH)
+$env.path ++= [$home_dir + "/.fnm"]
+$env.path ++= [$home_dir + "/.fnm/aliases/default/bin"]
