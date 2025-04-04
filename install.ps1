@@ -102,7 +102,7 @@ else {
                     @(
                     [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes and reapply after update"),
                     [System.Management.Automation.Host.ChoiceDescription]::new("&Reset", "Discard local changes"),
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&S&kip", "Skip update to preserve changes")
+                    [System.Management.Automation.Host.ChoiceDescription]::new("S&kip", "Skip update to preserve changes")
                 ),
                 2  # Default to Skip
             )
@@ -134,7 +134,11 @@ else {
             # Apply stashed changes if needed
             if ($stashed) {
                 Write-Host "Reapplying stashed changes..."
-                git stash pop
+                try {
+                    git stash pop
+                } catch {
+                    Write-Host "Failed to reapply stashed changes. Please resolve conflicts manually."
+                }
             }
         }
     }

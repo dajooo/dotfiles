@@ -230,7 +230,7 @@ else
             # Apply stashed changes if needed
             if [ "$STASHED" = true ]; then
                 prompt_info "Reapplying stashed changes..."
-                git stash pop
+                git stash pop || prompt_error "Failed to reapply stashed changes. Please resolve conflicts manually."
             fi
         fi
     fi
