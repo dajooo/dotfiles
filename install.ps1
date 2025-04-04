@@ -3,6 +3,12 @@ param(
     [switch]$y = $false
 )
 
+# Check if script is being run via Invoke-Expression with -y flag
+# This is needed because parameters can't be directly passed to scripts run via iex
+if ($MyInvocation.Line -match '\s+-y\b' -or $MyInvocation.Line -match '\s+/y\b') {
+    $y = $true
+}
+
 $DotfilesDir = "$env:USERPROFILE\.dotfiles"
 
 # Function to prompt for yes/no
@@ -91,7 +97,11 @@ Write-Host "`n⚙️ Installing nushell..."
 & .\scripts\nu\install-nu.ps1
 
 Write-Host "`n🔧 Applying configuration..."
-nu .\scripts\apply.nu
+if ($y) {
+    nu .\scripts\apply.nu -y
+} else {
+    nu .\scripts\apply.nu
+}
 
 Write-Host "`n✨ Installation complete!"
 Write-Host "You can now:"

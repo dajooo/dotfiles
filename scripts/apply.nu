@@ -198,7 +198,7 @@ def process_mapping [mapping, answer_all: bool] {
 }
 
 # Main execution
-def main [] {
+def main [--auto-yes (-y)] {
     print_info "🔗 Creating symlinks..."
     
     # Check for admin privileges on Windows
@@ -212,14 +212,14 @@ def main [] {
         exit 1
     }
     
-    # Ask for confirmation before proceeding
-    if not (prompt_yes_no "Would you like to proceed with creating symlinks?") {
+    # Ask for confirmation before proceeding (unless auto-yes is set)
+    if not $auto_yes and not (prompt_yes_no "Would you like to proceed with creating symlinks?") {
         print_error "Operation cancelled."
         exit 0
     }
     
     let config = load_config
-    let answer_all = false
+    let answer_all = $auto_yes
     $config.pathMappings | reduce -f $answer_all { |mapping, acc|
         process_mapping $mapping $acc
     }

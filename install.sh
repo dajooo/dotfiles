@@ -195,7 +195,11 @@ prompt_info "⚙️ Installing nushell..."
 ./scripts/nu/install-nu.sh
 
 prompt_info "🔧 Applying configuration..."
-nu ./scripts/apply.nu
+if [ "$AUTO_YES" = true ]; then
+    nu ./scripts/apply.nu -y
+else
+    nu ./scripts/apply.nu
+fi
 
 prompt_success "✨ Installation complete!"
 echo "You can now:"
