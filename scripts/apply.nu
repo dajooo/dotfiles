@@ -231,4 +231,8 @@ def main [
 }
 
 # Run the main function
-main
+if (try { $env.DOTFILES_AUTO_YES == "true" } catch { false }) {
+    main --auto-yes
+} else {
+    main
+}
