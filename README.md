@@ -9,14 +9,24 @@ My personal dotfiles for shell configuration, focusing on nushell with starship 
 powershell -c "irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
 ```
 
+For non-interactive installation (auto-yes to all prompts):
+```powershell
+powershell -c "irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex -y"
+```
+
 ### Linux/macOS
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dajooo/dotfiles/main/install.sh | bash
 ```
 
+For non-interactive installation (auto-yes to all prompts):
+```bash
+curl -fsSL https://raw.githubusercontent.com/dajooo/dotfiles/main/install.sh | bash -s -- -y
+```
+
 The installer will:
 1. Check for required dependencies
-2. Ask for confirmation before installing anything
+2. Ask for confirmation before installing anything (unless the -y flag is used)
 3. Clone the repository to ~/.dotfiles
 4. Install and configure nushell and starship
 5. Set up appropriate configuration for your platform

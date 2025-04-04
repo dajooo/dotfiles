@@ -1,10 +1,21 @@
 # One-click installer for dotfiles
+param(
+    [switch]$y = $false
+)
 
 $DotfilesDir = "$env:USERPROFILE\.dotfiles"
 
 # Function to prompt for yes/no
 function Prompt-YesNo {
-    param([string]$Question)
+    param(
+        [string]$Question,
+        [switch]$AutoYes = $false
+    )
+    
+    # If -y flag is set, automatically return true
+    if ($AutoYes) {
+        return $true
+    }
     
     $choices = @(
         [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Proceed with the action")
@@ -27,7 +38,7 @@ Write-Host "5. Configure Windows Terminal"
 Write-Host "6. Set up shell configuration`n"
 
 # Ask for confirmation before proceeding
-if (-not (Prompt-YesNo "Would you like to proceed with the installation?")) {
+if (-not (Prompt-YesNo -Question "Would you like to proceed with the installation?" -AutoYes $y)) {
     Write-Host "Installation cancelled."
     exit 0
 }
@@ -38,7 +49,7 @@ Write-Host "`n🔍 Checking dependencies..."
 # Check for git
 if (-not (Get-Command "git" -ErrorAction SilentlyContinue)) {
     Write-Host "Git is not installed."
-    if (Prompt-YesNo "Would you like to install Git?") {
+    if (Prompt-YesNo -Question "Would you like to install Git?" -AutoYes $y) {
         # Check for winget
         if (-not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
             Write-Host "Installing winget..."
@@ -64,7 +75,7 @@ if (-not (Test-Path $DotfilesDir)) {
 }
 else {
     Write-Host "`n📂 Repository already exists."
-    if (Prompt-YesNo "Would you like to update it?") {
+    if (Prompt-YesNo -Question "Would you like to update it?" -AutoYes $y) {
         Set-Location $DotfilesDir
         git pull
         Write-Host "📥 Updating submodules..."

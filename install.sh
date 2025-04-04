@@ -3,6 +3,15 @@
 # One-click installer for dotfiles
 DOTFILES_DIR="$HOME/.dotfiles"
 
+# Parse command line arguments
+AUTO_YES=false
+while getopts "y" opt; do
+  case $opt in
+    y) AUTO_YES=true ;;
+    *) ;;
+  esac
+done
+
 # Embedded prompt library
 # Colors and formatting
 RED='\033[0;31m'
@@ -26,6 +35,11 @@ is_interactive() {
 prompt_yes_no() {
     local prompt="$1"
     local default="${2:-n}"  # Default to 'n' if not specified
+    
+    # If -y flag is set, automatically return true
+    if [ "$AUTO_YES" = true ]; then
+        return 0
+    fi
     
     # If not interactive, use default
     if ! is_interactive; then
