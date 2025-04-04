@@ -87,53 +87,53 @@ else {
         # Initialize variables
         $skipUpdate = $false
         $stashed = $false
-        
+
         # Check for local changes
         $hasChanges = (git status --porcelain)
         if ($hasChanges) {
             Write-Host "Local changes detected in the repository."
             if ($y) {
-                # In non-interactive mode, default to stashing the changes
-                $choice = 0
+                # In non-interactive mode (-y flag), default to stashing changes
                 Write-Host "Stashing local changes..."
                 git stash
                 $stashed = $true
             } else {
+                # Interactive mode, prompt user
                 $choice = $Host.UI.PromptForChoice(
                     "Local Changes",
                     "How would you like to handle local changes?",
                     @(
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes and reapply after update"),
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&Reset", "Discard local changes"),
-                    [System.Management.Automation.Host.ChoiceDescription]::new("S&kip", "Skip update to preserve changes")
-                ),
-                2  # Default to Skip
-            )
-            }
-            
-            switch ($choice) {
-                0 {
-                    Write-Host "Stashing local changes..."
-                    git stash
-                    $stashed = $true
-                }
-                1 {
-                    Write-Host "Discarding local changes..."
-                    git reset --hard
-                }
-                2 {
-                    Write-Host "Skipping repository update to preserve your local changes."
-                    $skipUpdate = $true
+                        [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes and reapply after update"),
+                        [System.Management.Automation.Host.ChoiceDescription]::new("&Reset", "Discard local changes"),
+                        [System.Management.Automation.Host.ChoiceDescription]::new("S&kip", "Skip update to preserve changes")
+                    ),
+                    2  # Default to Skip
+                )
+
+                switch ($choice) {
+                    0 { # Stash
+                        Write-Host "Stashing local changes..."
+                        git stash
+                        $stashed = $true
+                    }
+                    1 { # Reset
+                        Write-Host "Discarding local changes..."
+                        git reset --hard
+                    }
+                    2 { # Skip
+                        Write-Host "Skipping repository update to preserve your local changes."
+                        $skipUpdate = $true
+                    }
                 }
             }
         }
-        
+
         if (-not $skipUpdate) {
             Write-Host "Updating repository..."
             git pull
             Write-Host "📥 Initializing submodules..."
             git submodule update --init --recursive
-            
+
             # Apply stashed changes if needed
             if ($stashed) {
                 Write-Host "Reapplying stashed changes..."

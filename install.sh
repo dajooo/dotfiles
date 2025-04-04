@@ -192,32 +192,35 @@ else
             echo "2) Discard local changes"
             echo "3) Skip update to preserve changes (default)"
             
-            # Default to option 1 (stash) if -y flag is set
             if [ "$AUTO_YES" = true ]; then
-                CHOICE=1
+                # In non-interactive mode (-y flag), default to stashing changes
+                prompt_info "Stashing local changes..."
+                git stash
+                STASHED=true
             else
+                # Interactive mode, prompt user
                 read -p "Enter choice [1-3]: " CHOICE
                 # Default to 3 if empty
                 CHOICE=${CHOICE:-3}
+
+                case $CHOICE in
+                    1) # Stash
+                        prompt_info "Stashing local changes..."
+                        git stash
+                        STASHED=true
+                        ;;
+                    2) # Reset
+                        prompt_info "Discarding local changes..."
+                        git reset --hard
+                        ;;
+                    3|*) # Skip
+                        prompt_info "Skipping repository update to preserve your local changes."
+                        SKIP_UPDATE=true
+                        ;;
+                esac
             fi
-            
-            case $CHOICE in
-                1)
-                    prompt_info "Stashing local changes..."
-                    git stash
-                    STASHED=true
-                    ;;
-                2)
-                    prompt_info "Discarding local changes..."
-                    git reset --hard
-                    ;;
-                3|*)
-                    prompt_info "Skipping repository update to preserve your local changes."
-                    SKIP_UPDATE=true
-                    ;;
-            esac
         fi
-        
+
         if [ -z "$SKIP_UPDATE" ]; then
             prompt_info "Updating repository..."
             git pull || {
@@ -226,7 +229,7 @@ else
             }
             prompt_info "📥 Updating submodules..."
             git submodule update --init --recursive
-            
+
             # Apply stashed changes if needed
             if [ "$STASHED" = true ]; then
                 prompt_info "Reapplying stashed changes..."
