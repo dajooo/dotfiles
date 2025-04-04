@@ -11,9 +11,6 @@ source $"($nu.default-config-dir)/scripts/custom-completions/winget/winget-compl
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-help.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
 
-# Aliases
-source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
-
 let home_dir = if $nu.os-info.name == "windows" { $env.USERPROFILE } else { $env.HOME }
 $env.path ++= [$home_dir + "/.fnm"]
 $env.path ++= [$home_dir + "/.fnm/aliases/default/bin"]
