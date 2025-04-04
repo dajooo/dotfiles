@@ -9,13 +9,9 @@ My personal dotfiles for shell configuration, focusing on nushell with starship 
 powershell -c "irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
 ```
 
-For non-interactive installation (auto-yes to all prompts), use this two-step process:
+For non-interactive installation (auto-yes to all prompts):
 ```powershell
-# Step 1: Download the script
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 -OutFile $env:TEMP\install.ps1
-
-# Step 2: Run with -y flag
-& $env:TEMP\install.ps1 -y
+powershell -c "$env:DOTFILES_AUTO_YES='true'; irm https://raw.githubusercontent.com/dajooo/dotfiles/main/install.ps1 | iex"
 ```
 
 ### Linux/macOS

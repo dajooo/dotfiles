@@ -3,9 +3,9 @@ param(
     [switch]$y = $false
 )
 
-# Check if script is being run via Invoke-Expression with -y flag
+# Check if script is being run via Invoke-Expression with -y flag or if DOTFILES_AUTO_YES is set
 # This is needed because parameters can't be directly passed to scripts run via iex
-if ($MyInvocation.Line -match '\s+-y\b' -or $MyInvocation.Line -match '\s+/y\b') {
+if ($MyInvocation.Line -match '\s+-y\b' -or $MyInvocation.Line -match '\s+/y\b' -or $env:DOTFILES_AUTO_YES -eq 'true') {
     $y = $true
 }
 
