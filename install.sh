@@ -178,30 +178,56 @@ else
     if prompt_yes_no "Would you like to update it?" "y"; then
         cd "$DOTFILES_DIR"
         
+        # Initialize variables
+        SKIP_UPDATE=
+        STASHED=
+        
         # Check for local changes
         if [ -n "$(git status --porcelain)" ]; then
             prompt_info "Local changes detected in the repository."
-            if prompt_yes_no "Would you like to stash your local changes before updating?" "y"; then
-                git stash
-                STASHED=true
-            elif prompt_yes_no "Would you like to reset your local changes (this will discard them)?" "y"; then
-                git reset --hard
+            
+            # Present options
+            echo "How would you like to handle local changes?"
+            echo "1) Stash changes and reapply after update"
+            echo "2) Discard local changes"
+            echo "3) Skip update to preserve changes (default)"
+            
+            # Default to option 3 (skip) if -y flag is set
+            if [ "$AUTO_YES" = true ]; then
+                CHOICE=3
             else
-                prompt_info "Skipping repository update to preserve your local changes."
-                SKIP_UPDATE=true
+                read -p "Enter choice [1-3]: " CHOICE
+                # Default to 3 if empty
+                CHOICE=${CHOICE:-3}
             fi
+            
+            case $CHOICE in
+                1)
+                    prompt_info "Stashing local changes..."
+                    git stash
+                    STASHED=true
+                    ;;
+                2)
+                    prompt_info "Discarding local changes..."
+                    git reset --hard
+                    ;;
+                3|*)
+                    prompt_info "Skipping repository update to preserve your local changes."
+                    SKIP_UPDATE=true
+                    ;;
+            esac
         fi
         
         if [ -z "$SKIP_UPDATE" ]; then
+            prompt_info "Updating repository..."
             git pull
             prompt_info "📥 Updating submodules..."
             git submodule update --init --recursive
             
             # Apply stashed changes if needed
             if [ "$STASHED" = true ]; then
-                if prompt_yes_no "Would you like to reapply your stashed changes?" "n"; then
-                    git stash pop
-                fi
+                prompt_info "Reapplying stashed changes..."
+                git stash pop
             fi
         fi
     fi
