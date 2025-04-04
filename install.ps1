@@ -97,13 +97,11 @@ Write-Host "`n⚙️ Installing nushell..."
 & .\scripts\nu\install-nu.ps1
 
 Write-Host "`n🔧 Applying configuration..."
-# Set environment variable for auto-yes if -y flag is set
 if ($y) {
-    $env:DOTFILES_AUTO_YES = "true"
+    nu .\scripts\apply.nu -y
 } else {
-    $env:DOTFILES_AUTO_YES = "false"
+    nu .\scripts\apply.nu
 }
-nu .\scripts\apply.nu
 
 Write-Host "`n✨ Installation complete!"
 Write-Host "You can now:"

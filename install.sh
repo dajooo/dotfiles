@@ -195,13 +195,11 @@ prompt_info "⚙️ Installing nushell..."
 ./scripts/nu/install-nu.sh
 
 prompt_info "🔧 Applying configuration..."
-# Set environment variable for auto-yes if -y flag is set
 if [ "$AUTO_YES" = true ]; then
-    export DOTFILES_AUTO_YES="true"
+    nu ./scripts/apply.nu -y
 else
-    export DOTFILES_AUTO_YES="false"
+    nu ./scripts/apply.nu
 fi
-nu ./scripts/apply.nu
 
 prompt_success "✨ Installation complete!"
 echo "You can now:"
