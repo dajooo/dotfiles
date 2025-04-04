@@ -193,11 +193,11 @@ else
             echo "3) Skip update to preserve changes (default)"
             
             if [ "$AUTO_YES" = true ]; then
-                # In non-interactive mode (-y flag), default to stashing changes
-                prompt_info "Stashing local changes..."
-                git stash
-                STASHED=true
-                # Ensure clean state before pull when stashing
+                # In non-interactive mode (-y flag), automatically stash changes without reapplying
+                TIMESTAMP=$(date +%Y%m%d%H%M%S)
+                STASH_MESSAGE="dotfiles-installer-$TIMESTAMP"
+                prompt_info "Stashing local changes with message '$STASH_MESSAGE'..."
+                git stash push -m "$STASH_MESSAGE"
                 prompt_info "Cleaning repository and resetting to HEAD before pulling..."
                 git clean -fdx
                 git reset --hard HEAD
@@ -209,10 +209,10 @@ else
 
                 case $CHOICE in
                     1) # Stash
-                        prompt_info "Stashing local changes..."
-                        git stash
-                        STASHED=true
-                        # Ensure clean state before pull when stashing
+                        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+                        STASH_MESSAGE="dotfiles-installer-$TIMESTAMP"
+                        prompt_info "Stashing local changes with message '$STASH_MESSAGE'..."
+                        git stash push -m "$STASH_MESSAGE"
                         prompt_info "Cleaning repository and resetting to HEAD before pulling..."
                         git clean -fdx
                         git reset --hard HEAD
@@ -237,12 +237,7 @@ else
             }
             prompt_info "📥 Updating submodules..."
             git submodule update --init --recursive
-
-            # Apply stashed changes if needed
-            if [ "$STASHED" = true ]; then
-                prompt_info "Reapplying stashed changes..."
-                git stash pop || prompt_error "Failed to reapply stashed changes. Please resolve conflicts manually."
-            fi
+            # NOTE: Stashed changes are NOT reapplied automatically.
         fi
     fi
 fi

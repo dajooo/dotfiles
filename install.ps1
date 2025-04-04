@@ -86,18 +86,26 @@ else {
         
         # Initialize variables
         $skipUpdate = $false
-        $stashed = $false
 
-        # Check for local changes
+        # Check for unmerged files first
+        $unmergedFiles = (git diff --name-only --diff-filter=U)
+        if ($unmergedFiles) {
+            Write-Host -ForegroundColor Red "Error: Unresolved merge conflicts detected in the repository:"
+            $unmergedFiles | ForEach-Object { Write-Host -ForegroundColor Yellow "- $_" }
+            Write-Host -ForegroundColor Red "Please resolve these conflicts manually in '$DotfilesDir' and then re-run the installer."
+            exit 1
+        }
+
+        # Check for other local changes
         $hasChanges = (git status --porcelain)
         if ($hasChanges) {
             Write-Host "Local changes detected in the repository."
             if ($y) {
-                # In non-interactive mode (-y flag), default to stashing changes
-                Write-Host "Stashing local changes..."
-                git stash
-                $stashed = $true
-                # Ensure clean state before pull when stashing
+                # In non-interactive mode (-y flag), automatically stash changes without reapplying
+                $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+                $stashMessage = "dotfiles-installer-$timestamp"
+                Write-Host "Stashing local changes with message '$stashMessage'..."
+                git stash push -m $stashMessage
                 Write-Host "Cleaning repository and resetting to HEAD before pulling..."
                 git clean -fdx
                 git reset --hard HEAD
@@ -107,7 +115,7 @@ else {
                     "Local Changes",
                     "How would you like to handle local changes?",
                     @(
-                        [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes and reapply after update"),
+                        [System.Management.Automation.Host.ChoiceDescription]::new("&Stash", "Stash changes (manual reapply later)"),
                         [System.Management.Automation.Host.ChoiceDescription]::new("&Reset", "Discard local changes"),
                         [System.Management.Automation.Host.ChoiceDescription]::new("S&kip", "Skip update to preserve changes")
                     ),
@@ -116,10 +124,10 @@ else {
 
                 switch ($choice) {
                     0 { # Stash
-                        Write-Host "Stashing local changes..."
-                        git stash
-                        $stashed = $true
-                        # Ensure clean state before pull when stashing
+                        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+                        $stashMessage = "dotfiles-installer-$timestamp"
+                        Write-Host "Stashing local changes with message '$stashMessage'..."
+                        git stash push -m $stashMessage
                         Write-Host "Cleaning repository and resetting to HEAD before pulling..."
                         git clean -fdx
                         git reset --hard HEAD
@@ -141,16 +149,7 @@ else {
             git pull
             Write-Host "📥 Initializing submodules..."
             git submodule update --init --recursive
-
-            # Apply stashed changes if needed
-            if ($stashed) {
-                Write-Host "Reapplying stashed changes..."
-                try {
-                    git stash pop
-                } catch {
-                    Write-Host "Failed to reapply stashed changes. Please resolve conflicts manually."
-                }
-            }
+            # NOTE: Stashed changes are NOT reapplied automatically.
         }
     }
 }
