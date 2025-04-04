@@ -93,8 +93,11 @@ else {
         if ($hasChanges) {
             Write-Host "Local changes detected in the repository."
             if ($y) {
-                # In non-interactive mode, default to skipping the update
-                $choice = 2
+                # In non-interactive mode, default to stashing the changes
+                $choice = 0
+                Write-Host "Stashing local changes..."
+                git stash
+                $stashed = $true
             } else {
                 $choice = $Host.UI.PromptForChoice(
                     "Local Changes",

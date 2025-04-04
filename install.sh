@@ -192,9 +192,9 @@ else
             echo "2) Discard local changes"
             echo "3) Skip update to preserve changes (default)"
             
-            # Default to option 3 (skip) if -y flag is set
+            # Default to option 1 (stash) if -y flag is set
             if [ "$AUTO_YES" = true ]; then
-                CHOICE=3
+                CHOICE=1
             else
                 read -p "Enter choice [1-3]: " CHOICE
                 # Default to 3 if empty
