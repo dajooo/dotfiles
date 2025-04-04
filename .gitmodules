@@ -1,6 +1,3 @@
-[submodule "shell/nu/scripts"]
-	path = shell/nu/scripts
-	url = https://github.com/nushell/nu_scripts.git
 [submodule "files/shell/nu/scripts"]
 	path = files/shell/nu/scripts
 	url = https://github.com/nushell/nu_scripts.git

@@ -9,7 +9,10 @@ source $"($nu.default-config-dir)/scripts/custom-completions/rustup/rustup-compl
 source $"($nu.default-config-dir)/scripts/custom-completions/vscode/vscode-completions.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/winget/winget-completions.nu"
 source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-help.nu"
-#source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
+source $"($nu.default-config-dir)/scripts/custom-completions/auto-generate/parse-fish.nu"
 
 # Aliases
-#source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
+source $"($nu.default-config-dir)/scripts/aliases/git/git-aliases.nu"
+
+$env.PATH = ($env.HOME + "/.fnm:" + $env.PATH)
+$env.PATH = ($env.HOME + "/.fnm/aliases/default/bin:" + $env.PATH)
